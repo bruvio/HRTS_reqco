@@ -244,7 +244,7 @@ def main(label):
             # ########## lidall
             pulselist = []
             idlist = []
-
+            pdb.set_trace()
             logging.info('process %s',format(process))
             ppf = "HRTS/NE"
             pulselist, idlist = waiting_requests_pulse_list(process)
@@ -266,16 +266,14 @@ def main(label):
                     for hh, kk in enumerate(pulselist_new):
                         if pulselist[i] == pulselist_new[hh]:
                             idlist_new.append(idlist[i])
-                # checking all channels
-                # channels = int(linspace(1, 8, 8))
-                channels = arange(0, 8) + 1
+
 
                 for i, pulse in enumerate(pulselist_new):
 
                     SF_list = []
 
 
-                    ch_text = 'lid' + str(channel)
+
                     id = idlist_new[i]
                     st_ch = GetSF(pulse, 'hrts', 'ne')
                     st_ch = asscalar(st_ch)
