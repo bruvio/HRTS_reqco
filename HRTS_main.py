@@ -4,8 +4,8 @@
 # ----------------------------
 __author__ = "Bruno Viola"
 __Name__ = "HRTS RO tool GUI"
-__version__ = "0"
-__release__ = "2"
+__version__ = "1"
+__release__ = "0"
 __maintainer__ = "Bruno Viola"
 __email__ = "bruno.viola@ukaea.uk"
 __status__ = "Testing"

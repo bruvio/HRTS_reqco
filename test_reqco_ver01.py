@@ -265,7 +265,6 @@ def main(label):
                         if pulselist[i] == pulselist_new[hh]:
                             idlist_new.append(idlist[i])
 
-
                 for i, pulse in enumerate(pulselist_new):
 
                     SF_list = []
@@ -282,8 +281,6 @@ def main(label):
                     if (st_ch > 0):
                         # set pulse as done
                         logging.info('%s has the following SF %s',str(pulse), SF_list)
-
-
 
                         logging.info('hrts for pulse %s will be set done',str(pulse))
                         reqs = waiting_requests_for_pulse(process, str(pulse))
@@ -320,8 +317,8 @@ def main(label):
 
                     else:
                             logging.info('%s needs to be validated \n', str(pulse))
-                    logging.info('DONE')
-                    return
+                logging.info('DONE')
+                return
 
 
     #
