@@ -53,7 +53,7 @@ def waiting_requests(proc):
 def writing_requests_pulse_list(proc,folder):
     """
 
-    :param proc: process (lid3, lid4 or lidall)
+    :param proc: process (hrts)
     :return: list of pulses that need to be validated for the input process idlist, \
      list of ids related to the pulses
     """
@@ -213,15 +213,15 @@ def GetSF(pulse, dda,dtype):
     :return:
     """
 
-    
+
     # this sequence of instruction allows to extract status flag correctly for each pulse
     ihdat,iwdat,data,x,t,ier=ppfget(pulse,dda,dtype)
     pulse,seq,iwdat,comment,numdda,ddalist,ier=ppfinf(comlen=50,numdda=50)
     #info,cnfo,ddal,istl,pcom,pdsn,ier=pdinfo(pulse,seq) #commented lines, with this i get an error.
     istat,ier = ppfgsf(pulse,seq,dda,dtype,mxstat=1)
-    
+
     # print('GETSF ok')
-    
+
     return (istat)
 
 
@@ -241,10 +241,8 @@ def main(label):
         #
     if label[1] == 'hrts':
             process = 'hrts'
-            # ########## lidall
             pulselist = []
             idlist = []
-            pdb.set_trace()
             logging.info('process %s',format(process))
             ppf = "HRTS/NE"
             pulselist, idlist = waiting_requests_pulse_list(process)
@@ -278,7 +276,6 @@ def main(label):
                     st_ch = GetSF(pulse, 'hrts', 'ne')
                     st_ch = asscalar(st_ch)
                     SF_list.append(st_ch)
-                    # print(st_ch)
                     logging.debug(
                         'processing pulse %s ',str(pulse))
 
@@ -289,7 +286,6 @@ def main(label):
 
 
                         logging.info('hrts for pulse %s will be set done',str(pulse))
-                                # ask david
                         reqs = waiting_requests_for_pulse(process, str(pulse))
                         if not reqs:
                             logging.error(
@@ -301,10 +297,14 @@ def main(label):
                                 id = req["id"]
                                 logging.info('marking JPN %s as done', str(pulse))
 
-                                if yes_or_no('set message to requester? Y/N') :
-                                    sms=input()
-                                else:
-                                    sms=None
+## commented out these lines to remove requests for persolanised message to requester
+
+                                # if yes_or_no('set message to requester? Y/N') :
+                                #     sms=input()
+                                # else:
+                                #     sms=None
+                                sms = None
+##
                                 try:
                                     r = set_request_done(id, ppf,message=sms)
                                 except:
@@ -382,8 +382,3 @@ if __name__ == "__main__":
     logging.root.addHandler(hdlr)
     logging.root.setLevel(logging.INFO)
     main(argv)
-
-
-
-
-

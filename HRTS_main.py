@@ -26,6 +26,7 @@ import pathlib
 from logging.handlers import RotatingFileHandler
 from logging import handlers
 import sys
+import pdb
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 #sys.path.append('../')
