@@ -17,6 +17,7 @@ from PyQt4 import QtGui
 from pathlib import Path
 import os
 import reqco_window_gui
+from areyousure_gui import Ui_areyousure_window
 import argparse
 import json
 from collections import OrderedDict
@@ -55,23 +56,23 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
         cwd = os.getcwd()
         self.home = cwd
         if "USR" in os.environ:
-            logging.debug('USR in env')
+            logger.debug('USR in env')
             # self.owner = os.getenv('USR')
             self.owner = os.getlogin()
         else:
-            logging.debug('using getuser to authenticate')
+            logger.debug('using getuser to authenticate')
             import getpass
             self.owner = getpass.getuser()
 
-        logging.debug('this is your username {}'.format(self.owner))
+        logger.debug('this is your username {}'.format(self.owner))
         homefold = os.path.join(os.sep, 'u', self.owner)
-        logging.debug('this is your homefold {}'.format(homefold))
+        logger.debug('this is your homefold {}'.format(homefold))
         home = str(Path.home())
 
         cwd = os.getcwd()
         self.home = cwd
 
-        logging.debug('we are in %s', cwd)
+        logger.debug('we are in %s', cwd)
 
 
         with open('./user_installation_data.json', mode='r', encoding='utf-8') as f:
@@ -88,7 +89,8 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
 
 
         folder=self.input_dict['install_folder']
-        self.installationfolder= 'work'+os.sep+folder
+        self.basefolder = self.input_dict['base_folder']
+        self.installationfolder= folder
 
 
 
@@ -104,7 +106,7 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
         self.impossible_button.clicked.connect(
             self.mark_pulse_impossible)
         self.closed_button.clicked.connect(self.mark_pulse_closed)
-        # self.ui_reqco.done_button.clicked.connect(lambda:self.handle_areyousure(self.ui_reqco.done_button))
+        # self/home/.done_button.clicked.connect(lambda:self.handle_areyousure(self.ui_reqco.done_button))
         # self.ui_reqco.impossible_button.clicked.connect(lambda:self.handle_areyousure(self.ui_reqco.impossible_button))
 
         self.run_button.clicked.connect(self.scan_reqco_database)
@@ -127,11 +129,11 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
         as done in  Reqco database
         """
 
-        button = self.ui_reqco.done_button
-        self.ui_reqco.done_button.setChecked(True)
-        logging.debug('pressed button %s', button.text())
-        logging.info('are you sure?')
-        logging.info('waiting for user to click button')
+        button = self.done_button
+        self.done_button.setChecked(True)
+        logger.debug('pressed button %s', button.text())
+        logger.info('are you sure?')
+        logger.info('waiting for user to click button')
 
         self.areyousure_window = QtGui.QMainWindow()
         self.ui_areyousure = Ui_areyousure_window()
@@ -149,11 +151,11 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
         as impossible in  Reqco database
         """
 
-        button = self.ui_reqco.impossible_button
-        self.ui_reqco.impossible_button.setChecked(True)
-        logging.debug('pressed button %s', button.text())
-        logging.info('are you sure?')
-        logging.info('waiting for user to click button')
+        button = self.impossible_button
+        self.impossible_button.setChecked(True)
+        logger.debug('pressed button %s', button.text())
+        logger.info('are you sure?')
+        logger.info('waiting for user to click button')
 
         self.areyousure_window = QtGui.QMainWindow()
         self.ui_areyousure = Ui_areyousure_window()
@@ -174,11 +176,11 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
         Essentially "closed" means it's not done, but for non-physics reasons.
         """
 
-        button = self.ui_reqco.closed_button
-        self.ui_reqco.closed_button.setChecked(True)
-        logging.debug('pressed button %s', button.text())
-        logging.info('are you sure?')
-        logging.info('waiting for user to click button')
+        button = self.closed_button
+        self.closed_button.setChecked(True)
+        logger.debug('pressed button %s', button.text())
+        logger.info('are you sure?')
+        logger.info('waiting for user to click button')
 
         self.areyousure_window = QtGui.QMainWindow()
         self.ui_areyousure = Ui_areyousure_window()
@@ -203,9 +205,9 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
         logger.info('\n')
         logger.info('scanning database for process %s', process)
 
-        writing_requests_pulse_list(process,'/u/'+self.owner+ '/'+self.installationfolder+'/hrts_tools_logbook/')
+        writing_requests_pulse_list(process,'/'+self.basefolder+'/'+self.owner+ '/'+self.installationfolder+'/hrts_tools_logbook/')
 
-        logger.info('file(s) written to {}'.format('/u/'+self.owner+ '/'+self.installationfolder+'/hrts_tools_logbook/'))
+        logger.info('file(s) written to {}'.format('/'+self.basefolder+'/'+self.owner+ '/'+self.installationfolder+'/hrts_tools_logbook/'))
 
 
     # ----------------------------
@@ -219,8 +221,8 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
         import os
         import stat
         process = 'hrts'
-        logging.info('\n')
-        logging.info('scanning database for process %s', process)
+        logger.info('\n')
+        logger.info('scanning database for process %s', process)
         cwd = os.getcwd()
         run_reqco = './test_reqco_ver01.py'
         #run_reqco = './test_reqco_ver01.py'
@@ -228,6 +230,180 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
         os.chmod(run_reqco, st.st_mode | stat.S_IEXEC)
 
         os.system("{} {} ".format(run_reqco, process))
+
+
+    # ----------------------------
+    def handle_yes(self):
+        """
+        functions that ask to confirm if user wants to proceed
+
+        to set request for selected pulse as done/impossible/closed
+        """
+        logger.debug("pressed %s button", self.ui_areyousure.pushButton_YES.text())
+        if self.done_button.isChecked() == True:
+            logger.debug("continue")
+            self.set_pulse_done()
+            self.done_button.setChecked(False)
+
+        if self.impossible_button.isChecked() == True:
+            logger.debug("continue")
+            self.set_pulse_impossible()
+            self.impossible_button.setChecked(False)
+
+        if self.closed_button.isChecked() == True:
+            logger.debug("continue")
+            self.set_pulse_closed()
+            self.closed_button.setChecked(False)
+
+        self.ui_areyousure.pushButton_YES.setChecked(False)
+
+        self.areyousure_window.hide()
+
+    # ----------------------------
+    def set_pulse_closed(self):
+        """
+        request for
+        (pulse/process) marked as closed
+        """
+
+        process = "hrts"
+        pulse = int(self.lineEdit_pulse.text())
+
+        reqs = waiting_requests_for_pulse(process, str(pulse))
+        if not reqs:
+            logger.error(
+                "the selected combination of process %s and pulse %s is not in Reqco database",
+                process.upper(),
+                str(pulse),
+            )
+        else:
+
+            for req in reqs:
+                id = req["id"]
+                logger.info("marking JPN %s as closed", str(pulse))
+
+                ppf = "HRTS"
+
+                if yes_or_no("set message to requester? Y/N"):
+                    sms = input()
+                else:
+                    sms = None
+                try:
+                    r = set_request_closed(id, ppf, message=sms)
+                except:
+                    logger.error("error! check error message")
+
+                #
+                if r.status_code != 200:
+                    logger.error("Server returned error:")
+                    logger.error("%s", str(r.text))
+                else:
+                    logger.info(
+                        "JPN %s marked as closed", str(pulse)
+                    )  # ----------------------------
+
+    def set_pulse_done(self):
+        """
+        request for
+        (pulse/process) marked as done
+        """
+
+
+        process = "hrts"
+        pulse = int(self.lineEdit_pulse.text())
+
+        reqs = waiting_requests_for_pulse(process, str(pulse))
+        if not reqs:
+            logger.error(
+                "the selected combination of process %s and pulse %s is not in Reqco database",
+                process.upper(),
+                str(pulse),
+            )
+        else:
+
+            for req in reqs:
+                id = req["id"]
+                logger.info("marking JPN %s as done", str(pulse))
+
+                ppf = "HRTS"
+
+                if yes_or_no("set message to requester? Y/N"):
+                    sms = input()
+                else:
+                    sms = None
+                try:
+                    r = set_request_done(id, ppf, message=sms)
+                except:
+                    logger.error("error! check error message")
+
+                #
+                if r.status_code != 200:
+                    logger.error("Server returned error:")
+                    logger.error("%s", str(r.text))
+                else:
+                    logger.info("JPN %s marked as done", str(pulse))
+
+    # ----------------------------
+    def set_pulse_impossible(self):
+        """
+    request for
+    (pulse/process) marked as impossible
+    """
+
+
+        process = "hrts"
+        pulse = int(self.lineEdit_pulse.text())
+
+        reqs = waiting_requests_for_pulse(process, str(pulse))
+        if not reqs:
+            logger.error(
+                "the selected combination of process %s and pulse %s is not in Reqco database",
+                process.upper(),
+                str(pulse),
+            )
+        else:
+
+            for req in reqs:
+                id = req["id"]
+                logger.info("marking JPN %s as impossible", str(pulse))
+
+                if yes_or_no("set message to requester? Y/N"):
+                    sms = input()
+                else:
+                    sms = None
+                try:
+                    r = set_request_impossible(id, message=sms)
+                except:
+                    logger.error("error! check error message")
+
+                # r = set_request_impossible(id, ppf)
+                #
+                if r.status_code != 200:
+                    logger.error("Server returned error:")
+                    logger.error("%s", str(r.text))
+                else:
+                    logger.info("JPN %s marked as impossible", str(pulse))
+
+    # ----------------------------
+    def handle_no(self):
+        """
+    functions that ask to confirm if user wants NOT to proceed
+
+    to set request for selected pulse as done/impossible/closed
+    """
+
+        logger.debug("pressed %s button", self.ui_areyousure.pushButton_NO.text())
+        if self.done_button.isChecked() == True:
+            self.done_button.setChecked(False)
+            logger.debug("go back")
+
+        if self.impossible_button.isChecked() == True:
+            self.impossible_button.setChecked(False)
+            logger.debug("go back")
+
+        self.ui_areyousure.pushButton_NO.setChecked(False)
+        self.impossible_button.setChecked(False)
+        self.areyousure_window.hide()
 
 def main():
     """

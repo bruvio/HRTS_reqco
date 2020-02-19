@@ -26,6 +26,8 @@ class Ui_reqco_window(object):
     def setupUi(self, reqco_window):
         reqco_window.setObjectName(_fromUtf8("reqco_window"))
         reqco_window.resize(850, 468)
+        reqco_window.setMinimumSize(QtCore.QSize(850, 468))
+        reqco_window.setMaximumSize(QtCore.QSize(850, 468))
         self.centralwidget = QtGui.QWidget(reqco_window)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout_5 = QtGui.QGridLayout(self.centralwidget)

@@ -1,6 +1,7 @@
 //TO COMMENT USE // AT THE START OF THE LINE
 {
 //this folder must be inside /u/user/work i.e /u/bviola/work/test_kg1_Python
-  "install_folder" :"Python/HRTS_reqco"
+  "install_folder" :"Python/HRTS_reqco",
+  "base_folder":"work"
 
 }
