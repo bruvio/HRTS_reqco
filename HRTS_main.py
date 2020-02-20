@@ -8,8 +8,8 @@ __version__ = "1"
 __release__ = "0"
 __maintainer__ = "Bruno Viola"
 __email__ = "bruno.viola@ukaea.uk"
-__status__ = "Testing"
-#__status__ = "Production"
+# __status__ = "Testing"
+__status__ = "Production"
 
 
 
@@ -23,7 +23,7 @@ import json
 from collections import OrderedDict
 import logging
 from PyQt4 import QtCore, QtGui
-import pathlib
+import pathlib2
 from logging.handlers import RotatingFileHandler
 from logging import handlers
 import sys
@@ -267,40 +267,43 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
         """
 
         process = "hrts"
-        pulse = int(self.lineEdit_pulse.text())
+        # pulse = int(self.lineEdit_pulse.text())
+        pulselist = self.lineEdit_pulse.text()
+        pulselist = pulselist.split(",")
+        for pulse in pulselist:
 
-        reqs = waiting_requests_for_pulse(process, str(pulse))
-        if not reqs:
-            logger.error(
-                "the selected combination of process %s and pulse %s is not in Reqco database",
-                process.upper(),
-                str(pulse),
-            )
-        else:
+            reqs = waiting_requests_for_pulse(process, str(pulse))
+            if not reqs:
+                logger.error(
+                    "the selected combination of process %s and pulse %s is not in Reqco database",
+                    process.upper(),
+                    str(pulse),
+                )
+            else:
 
-            for req in reqs:
-                id = req["id"]
-                logger.info("marking JPN %s as closed", str(pulse))
+                for req in reqs:
+                    id = req["id"]
+                    logger.info("marking JPN %s as closed", str(pulse))
 
-                ppf = "HRTS"
+                    ppf = "HRTS"
 
-                if yes_or_no("set message to requester? Y/N"):
-                    sms = input()
-                else:
-                    sms = None
-                try:
-                    r = set_request_closed(id, ppf, message=sms)
-                except:
-                    logger.error("error! check error message")
+                    if yes_or_no("set message to requester? Y/N"):
+                        sms = input()
+                    else:
+                        sms = None
+                    try:
+                        r = set_request_closed(id, ppf, message=sms)
+                    except:
+                        logger.error("error! check error message")
 
-                #
-                if r.status_code != 200:
-                    logger.error("Server returned error:")
-                    logger.error("%s", str(r.text))
-                else:
-                    logger.info(
-                        "JPN %s marked as closed", str(pulse)
-                    )  # ----------------------------
+                    #
+                    if r.status_code != 200:
+                        logger.error("Server returned error:")
+                        logger.error("%s", str(r.text))
+                    else:
+                        logger.info(
+                            "JPN %s marked as closed", str(pulse)
+                        )  # ----------------------------
 
     def set_pulse_done(self):
         """
@@ -310,38 +313,42 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
 
 
         process = "hrts"
-        pulse = int(self.lineEdit_pulse.text())
+        pulselist = self.lineEdit_pulse.text()
+        pulselist = pulselist.split(",")
+        for pulse in pulselist:
 
-        reqs = waiting_requests_for_pulse(process, str(pulse))
-        if not reqs:
-            logger.error(
-                "the selected combination of process %s and pulse %s is not in Reqco database",
-                process.upper(),
-                str(pulse),
-            )
-        else:
 
-            for req in reqs:
-                id = req["id"]
-                logger.info("marking JPN %s as done", str(pulse))
 
-                ppf = "HRTS"
+            reqs = waiting_requests_for_pulse(process, str(pulse))
+            if not reqs:
+                logger.error(
+                    "the selected combination of process %s and pulse %s is not in Reqco database",
+                    process.upper(),
+                    str(pulse),
+                )
+            else:
 
-                if yes_or_no("set message to requester? Y/N"):
-                    sms = input()
-                else:
-                    sms = None
-                try:
-                    r = set_request_done(id, ppf, message=sms)
-                except:
-                    logger.error("error! check error message")
+                for req in reqs:
+                    id = req["id"]
+                    logger.info("marking JPN %s as done", str(pulse))
 
-                #
-                if r.status_code != 200:
-                    logger.error("Server returned error:")
-                    logger.error("%s", str(r.text))
-                else:
-                    logger.info("JPN %s marked as done", str(pulse))
+                    ppf = "HRTS"
+
+                    if yes_or_no("set message to requester? Y/N"):
+                        sms = input()
+                    else:
+                        sms = None
+                    try:
+                        r = set_request_done(id, ppf, message=sms)
+                    except:
+                        logger.error("error! check error message")
+
+                    #
+                    if r.status_code != 200:
+                        logger.error("Server returned error:")
+                        logger.error("%s", str(r.text))
+                    else:
+                        logger.info("JPN %s marked as done", str(pulse))
 
     # ----------------------------
     def set_pulse_impossible(self):
@@ -352,37 +359,41 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
 
 
         process = "hrts"
-        pulse = int(self.lineEdit_pulse.text())
+        # pulse = int(self.lineEdit_pulse.text())
+        pulselist = self.lineEdit_pulse.text()
+        pulselist = pulselist.split(",")
+        for pulse in pulselist:
 
-        reqs = waiting_requests_for_pulse(process, str(pulse))
-        if not reqs:
-            logger.error(
-                "the selected combination of process %s and pulse %s is not in Reqco database",
-                process.upper(),
-                str(pulse),
-            )
-        else:
 
-            for req in reqs:
-                id = req["id"]
-                logger.info("marking JPN %s as impossible", str(pulse))
+            reqs = waiting_requests_for_pulse(process, str(pulse))
+            if not reqs:
+                logger.error(
+                    "the selected combination of process %s and pulse %s is not in Reqco database",
+                    process.upper(),
+                    str(pulse),
+                )
+            else:
 
-                if yes_or_no("set message to requester? Y/N"):
-                    sms = input()
-                else:
-                    sms = None
-                try:
-                    r = set_request_impossible(id, message=sms)
-                except:
-                    logger.error("error! check error message")
+                for req in reqs:
+                    id = req["id"]
+                    logger.info("marking JPN %s as impossible", str(pulse))
 
-                # r = set_request_impossible(id, ppf)
-                #
-                if r.status_code != 200:
-                    logger.error("Server returned error:")
-                    logger.error("%s", str(r.text))
-                else:
-                    logger.info("JPN %s marked as impossible", str(pulse))
+                    if yes_or_no("set message to requester? Y/N"):
+                        sms = input()
+                    else:
+                        sms = None
+                    try:
+                        r = set_request_impossible(id, message=sms)
+                    except:
+                        logger.error("error! check error message")
+
+                    # r = set_request_impossible(id, ppf)
+                    #
+                    if r.status_code != 200:
+                        logger.error("Server returned error:")
+                        logger.error("%s", str(r.text))
+                    else:
+                        logger.info("JPN %s marked as impossible", str(pulse))
 
     # ----------------------------
     def handle_no(self):
@@ -446,7 +457,7 @@ if __name__ == '__main__':
     hdlr.setFormatter(fmt)
     logging.root.addHandler(hdlr)
     cwd = os.getcwd()
-    pathlib.Path(cwd + os.sep + 'hrts_tools_logbook').mkdir(parents=True,exist_ok=True)
+    pathlib2.Path(cwd + os.sep + 'hrts_tools_logbook').mkdir(parents=True,exist_ok=True)
     fh = handlers.RotatingFileHandler('./hrts_tools_logbook/LOGFILE.DAT', maxBytes=(1048576*5), backupCount=7)
     fh.setFormatter(fmt)
     logging.root.addHandler(fh)
