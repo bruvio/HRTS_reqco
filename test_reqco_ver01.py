@@ -18,6 +18,7 @@ import pdb
 from requests_kerberos import HTTPKerberosAuth
 #import numpy as np
 from numpy import size,linspace,arange,asscalar
+
 ukaea_auth = HTTPKerberosAuth()
 
 REQCO_API = "https://data.jet.uk/reqco/api/v1"
@@ -311,6 +312,7 @@ def main(label):
                                 if r.status_code != 200:
                                     logging.ERROR("Server returned error:")
                                     logging.ERROR(r.text)
+                                    return
                                 else:
                                     logging.info('JPN %s marked as done\n',
                                                 str(pulse))

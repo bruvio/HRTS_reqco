@@ -12,7 +12,7 @@ __email__ = "bruno.viola@ukaea.uk"
 __status__ = "Production"
 
 
-
+import subprocess
 from PyQt4 import QtGui
 from pathlib import Path
 import os
@@ -23,7 +23,7 @@ import json
 from collections import OrderedDict
 import logging
 from PyQt4 import QtCore, QtGui
-import pathlib2
+import pathlib
 from logging.handlers import RotatingFileHandler
 from logging import handlers
 import sys
@@ -89,7 +89,7 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
 
 
         folder=self.input_dict['install_folder']
-        self.basefolder = self.input_dict['base_folder']
+        #self.basefolder = self.input_dict['base_folder']
         self.installationfolder= folder
 
 
@@ -205,9 +205,9 @@ class HRTSRO_tool(QtGui.QMainWindow, reqco_window_gui.Ui_reqco_window):
         logger.info('\n')
         logger.info('scanning database for process %s', process)
 
-        writing_requests_pulse_list(process,'/'+self.basefolder+'/'+self.owner+ '/'+self.installationfolder+'/hrts_tools_logbook/')
+        writing_requests_pulse_list(process,'/'+self.owner+ '/'+self.installationfolder+'/hrts_tools_logbook/')
 
-        logger.info('file(s) written to {}'.format('/'+self.basefolder+'/'+self.owner+ '/'+self.installationfolder+'/hrts_tools_logbook/'))
+        logger.info('file(s) written to {}'.format('/'+self.owner+ '/'+self.installationfolder+'/hrts_tools_logbook/'))
 
 
     # ----------------------------
@@ -425,7 +425,8 @@ def main():
     by default is set to INFO
     """
     logger.info("Running HRTS tool.")
-
+    import subprocess
+    subprocess.call('kinit',shell=True)
     app = QtGui.QApplication(argv)
     MainWindow = HRTSRO_tool()
     MainWindow.show()
